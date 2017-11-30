@@ -10,36 +10,35 @@ Fabric    | Tests  | Date
 
 1. Add PBFT consenters into orderer, modify fabric/orderer/main.go
 
-**import** `"github.com/amamina/chari"`  
+    **import** `"github.com/amamina/chari"`  
 
-**add**  `consenters["pbft"] = chari.New()`  after  
-
-```go
-consenters["solo"] = solo.New()
-consenters["kafka"] = kafka.New(conf.Kafka.TLS, conf.Kafka.Retry, conf.Kafka.Version)
-```
+    **add**  `consenters["pbft"] = chari.New()`  after  
+    
+    ```go
+    consenters["solo"] = solo.New()
+    consenters["kafka"] = kafka.New(conf.Kafka.TLS, conf.Kafka.Retry, conf.Kafka.Version)
+    ```
 2. Support pbft in configtx.yaml, modify fabric/common/configtx/tool/provisional/provisional.go
 
-**add** `ConsensusTypePBFT = "pbft"` after
-
-```go
-// ConsensusTypeSolo identifies the solo consensus implementation.
-ConsensusTypeSolo = "solo"
-// ConsensusTypeKafka identifies the Kafka-based consensus implementation.
-ConsensusTypeKafka = "kafka"
-```
-
-**add** `case ConsensusTypePBFT: //do nothing` after
-
-```go
-switch conf.Orderer.OrdererType {
-		case ConsensusTypeSolo:
-		case ConsensusTypeKafka:
-			bs.ordererGroups = append(bs.ordererGroups, config.TemplateKafkaBrokers(conf.Orderer.Kafka.Brokers))
-```
+    **add** `ConsensusTypePBFT = "pbft"` after
+    
+    ```go
+    // ConsensusTypeSolo identifies the solo consensus implementation.
+    ConsensusTypeSolo = "solo"
+    // ConsensusTypeKafka identifies the Kafka-based consensus implementation.
+    ConsensusTypeKafka = "kafka"
+    ```
+    
+    **add** `case ConsensusTypePBFT: //do nothing` after
+    
+    ```go
+    switch conf.Orderer.OrdererType {
+    		case ConsensusTypeSolo:
+    		case ConsensusTypeKafka:
+    			bs.ordererGroups = append(bs.ordererGroups, config.TemplateKafkaBrokers(conf.Orderer.Kafka.Brokers))
+    ```
 3. Change consensus to PBFT in configtx.yaml
-
-`OrdererType: pbft`
+    `OrdererType: pbft`
 
 
 
