@@ -38,6 +38,7 @@ Fabric    | Tests  | Date
     			bs.ordererGroups = append(bs.ordererGroups, config.TemplateKafkaBrokers(conf.Orderer.Kafka.Brokers))
     ```
 3. Change consensus to PBFT in configtx.yaml
+
     `OrdererType: pbft`
 
 
