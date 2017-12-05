@@ -34,9 +34,9 @@ Fabric    | Tests  | Date
     
     ```go
     switch conf.Orderer.OrdererType {
-    		case ConsensusTypeSolo:
-    		case ConsensusTypeKafka:
-    			bs.ordererGroups = append(bs.ordererGroups, config.TemplateKafkaBrokers(conf.Orderer.Kafka.Brokers))
+    case ConsensusTypeSolo:
+    case ConsensusTypeKafka:
+    bs.ordererGroups = append(bs.ordererGroups, config.TemplateKafkaBrokers(conf.Orderer.Kafka.Brokers))
     ```
 3. Change consensus to PBFT in configtx.yaml
 
