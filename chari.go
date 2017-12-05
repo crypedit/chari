@@ -10,11 +10,9 @@ import (
 	"github.com/hyperledger/fabric/orderer/multichain"
 	cb "github.com/hyperledger/fabric/protos/common"
 	"github.com/op/go-logging"
-	//	"github.com/spf13/viper"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/tendermint/abci/server"
 	rpc "github.com/tendermint/tendermint/rpc/client"
-	cmn "github.com/tendermint/tmlibs/common"
 )
 
 var logger = logging.MustGetLogger("chari")
@@ -25,10 +23,6 @@ var (
 	_echo  *echo
 )
 
-const (
-	appHash = "AramakiMisaki" //4172616D616B694D6973616B69
-)
-
 type chain struct {
 	support  multichain.ConsenterSupport
 	sendChan chan *cb.Envelope
@@ -37,13 +31,6 @@ type chain struct {
 
 func _Init() {
 	once.Do(func() {
-		if os.Getenv("BFT_PROXY_APP") == "" {
-			panic("BFT_PROXY_APP not found")
-		}
-		if os.Getenv("BFT_RPC_ADDR") == "" {
-			panic("BFT_RPC_ADDR not found")
-		}
-
 		format := logging.MustStringFormatter(`[%{module}] %{time:2006-01-02 15:04:05} [%{level}] [%{longpkg} %{shortfile}] { %{message} }`)
 
 		backendConsole := logging.NewLogBackend(os.Stderr, "", 0)
@@ -52,32 +39,38 @@ func _Init() {
 		logging.SetBackend(backendConsole2Formatter)
 		logging.SetLevel(logging.INFO, "")
 
-		var err error
+		err := initConfig()
+		if err != nil {
+			panic(err)
+		}
+
 		db, err = leveldb.OpenFile("/var/hyperledger/production/chari", nil)
 		if err != nil {
 			panic(err)
 		}
 		defer db.Close()
 
-		client = rpc.NewHTTP(fmt.Sprintf("tcp://%s", os.Getenv("BFT_RPC_ADDR")), "/websocket")
+		client = rpc.NewHTTP(rpc_laddr, "/websocket")
 
 		_echo = &echo{supports: make(map[string]multichain.ConsenterSupport, 10)}
-		srv, err := server.NewServer(os.Getenv("BFT_PROXY_APP"), "socket", _echo)
+		srv, err := server.NewServer(proxy_app, "socket", _echo)
 		if err != nil {
 			panic(err)
 		}
 
-		logger.Info("trying to listen on", os.Getenv("BFT_PROXY_APP"))
+		go func() {
+			time.Sleep(time.Second * 5)
+			logger.Info("trying to startup tendermint")
+			startTendermint()
+		}()
+
+		logger.Info("trying to listen on", proxy_app)
 		if _, err = srv.Start(); err != nil {
 			panic(err)
 		}
 
-		// Wait forever
-		cmn.TrapSignal(func() {
-			// Cleanup
-			srv.Stop()
-			logger.Error("ABCI Server shutdown")
-		})
+		wait := make(chan int)
+		<-wait
 	})
 }
 

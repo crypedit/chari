@@ -12,6 +12,10 @@ import (
 	"github.com/tendermint/tendermint/version"
 )
 
+const (
+	AppHash = "ChariPBFTConsenter"
+)
+
 type echo struct {
 	lock            sync.Mutex
 	lastBlockHeight uint64
@@ -31,7 +35,7 @@ func (this *echo) getSupport(channelId string) multichain.ConsenterSupport {
 }
 
 func (this *echo) Info(req types.RequestInfo) types.ResponseInfo {
-	logger.Info("Info", req)
+	//	logger.Info("Info", req)
 
 	if val, err := db.Get([]byte("lastBlockHeight"), nil); err == nil {
 		this.lastBlockHeight = binary.BigEndian.Uint64(val)
@@ -41,7 +45,7 @@ func (this *echo) Info(req types.RequestInfo) types.ResponseInfo {
 	return types.ResponseInfo{
 		Version:          version.Version,
 		LastBlockHeight:  this.lastBlockHeight,
-		LastBlockAppHash: []byte(appHash),
+		LastBlockAppHash: []byte(AppHash),
 	}
 }
 
@@ -55,17 +59,17 @@ func (this *echo) InitChain(req types.RequestInitChain) {
 }
 
 func (this *echo) CheckTx(tx []byte) types.Result {
-	logger.Info("CheckTx" /*, string(tx)*/)
+	//	logger.Info("CheckTx" /*, string(tx)*/)
 	return types.OK
 }
 
 func (this *echo) BeginBlock(req types.RequestBeginBlock) {
-	logger.Info("BeginBlock", req)
+	//	logger.Info("BeginBlock", req)
 }
 
 func (this *echo) DeliverTx(tx []byte) types.Result {
 	channelId := string(tx[1 : tx[0]+1])
-	logger.Info("DeliverTx", channelId /*, string(tx[tx[0]+1:])*/)
+	//	logger.Info("DeliverTx", channelId /*, string(tx[tx[0]+1:])*/)
 
 	env := new(cb.Envelope)
 	if err := proto.Unmarshal(tx[tx[0]+1:], env); err != nil {
@@ -95,7 +99,7 @@ func (this *echo) EndBlock(height uint64) (resp types.ResponseEndBlock) {
 }
 
 func (this *echo) Commit() types.Result {
-	logger.Info("Commit")
+	//	logger.Info("Commit")
 
 	this.lock.Lock()
 	defer this.lock.Unlock()
@@ -114,10 +118,10 @@ func (this *echo) Commit() types.Result {
 		logger.Error(err)
 		return types.NewResult(types.CodeType_InternalError, nil, err.Error())
 	}
-	return types.NewResultOK([]byte(appHash), "")
+	return types.NewResultOK([]byte(AppHash), "")
 }
 
 func (this *echo) Query(req types.RequestQuery) (resp types.ResponseQuery) {
-	logger.Info("Query", req)
+	//	logger.Info("Query", req)
 	return
 }
