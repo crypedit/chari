@@ -51,7 +51,7 @@ Fabric    | Tests  | Date
 `Notice: charigen should be in the same dir of configtxgen and cryptogen.`
 
 6. Startup Orderer
-    Chari supports PBFT instead of Kafka in orderer, so Kakfa no needs. Now, orderers must meet 3F +1,  and additional configurations likes
+    Chari supports PBFT instead of Kafka in orderer, so Kakfa no needs. Now, orderers must meet 3F +1,  and additional configurations likes below  should be added to orderer shell.
 ```yaml
 -p 3450:3450 \
 -e BFT_P2P_PORT=3450 \
@@ -59,7 +59,6 @@ Fabric    | Tests  | Date
 -v /etc/hyperledger/crypto-config/chari0:/etc/hyperledger/chari \
 -v /etc/hyperledger/channel-artifacts/chari.genesis.json:/etc/hyperledger/chari/genesis.json \
 ```
-    should be added to orderer shell.
 
 ## Warning
 The current version, when orderer shutdown and restart, the one will be ejected by other orderers, cause the missing blocks during down time will re-execute after orderer restart, this operation will be regarded as do evil by other orderers. To avoid this issue, the down orderer should delete and re-startup but not restart. In the next version will fix this issue.
