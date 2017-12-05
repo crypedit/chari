@@ -55,7 +55,7 @@ Fabric    | Tests  | Date
 ```yaml
 -p 3450:3450 \
 -e BFT_P2P_PORT=3450 \
- -e BFT_P2P_SEEDS=192.168.110.128:3450,192.168.110.128:3451,192.168.110.128:3452,192.168.110.128:3453 \
+-e BFT_P2P_SEEDS=192.168.110.128:3450,192.168.110.128:3451,192.168.110.128:3452,192.168.110.128:3453 \
 -v /etc/hyperledger/crypto-config/chari0:/etc/hyperledger/chari \
 -v /etc/hyperledger/channel-artifacts/chari.genesis.json:/etc/hyperledger/chari/genesis.json \
 ```
