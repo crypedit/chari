@@ -19,6 +19,7 @@ log_level = "state:error,*:error"
 
 [consensus]
 create_empty_blocks = false
+max_block_size_txs = 500
 
 [rpc]
 laddr = "tcp://127.0.0.1:44453"
